@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>LealApp</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#2f2fa2">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:linear-gradient(135deg,#2f2fa2,#3b82f6,#6d28d9);min-height:100vh;padding:10px}
+.container{max-width:1100px;margin:auto}
+.screen{background:rgba(255,255,255,.97);border-radius:24px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.header{background:linear-gradient(90deg,#1e1b4b,#4338ca);padding:18px;color:#fff;text-align:center;position:relative}
+.logout-btn{position:absolute;right:8px;top:8px;background:rgba(255,255,255,.15);border:none;color:#fff;padding:4px 8px;border-radius:8px;font-size:11px;cursor:pointer;width:auto}
+.nav{display:flex;overflow:auto;background:#eef2ff}
+.nav button{flex:1;min-width:120px;padding:14px;border:none;background:none;font-weight:700}
+.nav button.active{background:#fff;color:#4338ca;border-bottom:3px solid #4338ca}
+.content{padding:18px}
+input,button{width:100%;padding:13px;margin:7px 0;border-radius:11px;border:1px solid #cbd5e1;font-size:15px}
+button{background:#4338ca;color:#fff;font-weight:bold;border:none}
+.btn-green{background:#10b981}.btn-orange{background:#f59e0b}.btn-red{background:#ef4444}.btn-gray{background:#64748b}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.stat-card,.cliente-card{background:#fff;border-radius:15px;padding:15px;box-shadow:0 8px 18px rgba(0,0,0,.06)}
+.cliente-card{border-left:5px solid #4338ca;cursor:pointer;margin-bottom:10px}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);justify-content:center;align-items:center;padding:10px}
+.modal-content{background:#fff;width:100%;max-width:430px;max-height:95vh;overflow:auto;padding:20px;border-radius:20px}
+.mov-item{background:#f8fafc;padding:8px;border-radius:10px;margin:6px 0;font-size:13px}
+</style>
+</head>
+<body>
+<div class="container" id="loginScreen">
+<div class="screen">
+<div class="header"><h1>LealApp</h1><p>Acceso Administrador</p></div>
+<div class="content">
+<h2 style="text-align:center;margin:15px 0">Iniciar Sesión</h2>
+<input type="text" id="username" placeholder="Usuario">
+<input type="password" id="password" placeholder="Contraseña">
+<button onclick="_0x1a()">Entrar</button>
+</div></div></div>
+
+<div class="container" id="appScreen" style="display:none;">
+<div class="screen">
+<div class="header"><h1>LealApp</h1><button class="logout-btn" onclick="_0x2b()">Salir</button></div>
+<div class="nav">
+<button class="active" onclick="_0x3c(0)">📊 Inicio</button>
+<button onclick="_0x3c(1)">➕ Nuevo</button>
+<button onclick="_0x3c(2)">👥 Clientes</button>
+<button onclick="_0x3c(3)">📷 Escanear</button>
+<button onclick="_0x3c(4)">💾 Backup</button>
+</div>
+
+<div class="content" id="section0">
+<div class="cards">
+<div class="stat-card"><h4>Total Clientes</h4><p id="stClientes">0</p></div>
+<div class="stat-card"><h4>Puntos Entregados</h4><p id="stEntregados">0</p></div>
+<div class="stat-card"><h4>Puntos Reclamados</h4><p id="stReclamados">0</p></div>
+<div class="stat-card"><h4>Premios</h4><p id="stPremio">0</p></div>
+</div>
+<div id="topClientes" style="margin-top:15px"></div>
+</div>
+
+<div class="content" id="section1" style="display:none;">
+<input type="text" id="nombre" placeholder="Nombre">
+<input type="text" id="apellido" placeholder="Apellido">
+<input type="tel" id="celular" placeholder="Celular">
+<input type="text" id="apodo" placeholder="Apodo">
+<button onclick="_0x4d()">Crear Cliente</button>
+</div>
+
+<div class="content" id="section2" style="display:none;">
+<input type="text" id="buscar" placeholder="Buscar..." onkeyup="_0x5e()">
+<div id="listaClientes"></div>
+</div>
+
+<div class="content" id="section3" style="display:none;">
+<button class="btn-green" onclick="_0x6f()">📷 Iniciar Cámara</button>
+<div id="reader"></div>
+<input type="text" id="buscarManual" placeholder="Buscar manual..." onkeyup="_0x7g()">
+<div id="resultadosManual"></div>
+</div>
+
+<div class="content" id="section4" style="display:none;">
+<button class="btn-gray" onclick="_0x8h()">📤 Exportar</button>
+<button class="btn-gray" onclick="document.getElementById('importFile').click()">📥 Importar</button>
+<input type="file" id="importFile" accept=".json" style="display:none;" onchange="_0x9i(event)">
+</div>
+</div></div>
+
+<div class="modal" id="modalDetalle">
+<div class="modal-content">
+<h2 id="modalNombre"></h2>
+<p>Código: <strong id="modalCodigo"></strong></p>
+<p id="modalInfo"></p>
+<div id="modalQR" style="text-align:center;margin:15px 0"></div>
+<p>Puntos: <strong id="modalPuntos"></strong></p>
+<input type="number" id="puntosInput" value="10">
+<button onclick="_0xaa()">➕ Agregar</button>
+<button class="btn-orange" onclick="_0xbb()">🎁 Reclamar</button>
+<div id="historialMov"></div>
+<button class="btn-red" onclick="_0xcc()">🗑 Eliminar</button>
+<button class="btn-gray" onclick="document.getElementById('modalDetalle').style.display='none'">Cerrar</button>
+</div></div>
+
+<script>
+let _db=JSON.parse(localStorage.getItem('lppx22'))||[],_act=null,_scan=null;
+const _u=atob('SHVudGVy'),_p=atob('NTUyNQ==');
+function _sv(){localStorage.setItem('lppx22',JSON.stringify(_db));_0xdd();}
+function _0x1a(){if(username.value===_u&&password.value===_p){loginScreen.style.display='none';appScreen.style.display='block';_0xdd();_0xee()}else alert('Acceso denegado');}
+function _0x2b(){appScreen.style.display='none';loginScreen.style.display='block';if(_scan){_scan.stop();_scan.clear();_scan=null;}}
+function _0x3c(n){document.querySelectorAll('.nav button').forEach((b,i)=>b.classList.toggle('active',i===n));for(let i=0;i<5;i++)document.getElementById('section'+i).style.display=i===n?'block':'none';if(n===2)_0xee();}
+function _mk(){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';let r='';for(let i=0;i<4;i++)r+=c[Math.floor(Math.random()*c.length)];return _db.some(x=>x.codigo===r)?_mk():r;}
+function _0x4d(){if(!nombre.value||!apellido.value||!celular.value)return alert('Completa datos');_db.unshift({id:Date.now(),codigo:_mk(),nombre:nombre.value,apellido:apellido.value,celular:celular.value,apodo:apodo.value,puntos:0,reclamados:0,movimientos:[]});_sv();nombre.value='';apellido.value='';celular.value='';apodo.value='';_0x3c(2);}
+function _0xee(f=null){listaClientes.innerHTML='';(f||_db).forEach(c=>{let d=document.createElement('div');d.className='cliente-card';d.innerHTML='<b>'+c.apellido+', '+c.nombre+'</b><br>'+c.codigo+' | ⭐ '+c.puntos;d.onclick=()=>_0xff(c);listaClientes.appendChild(d);});}
+function _0x5e(){let t=buscar.value.toUpperCase();_0xee(_db.filter(c=>c.nombre.toUpperCase().includes(t)||c.apellido.toUpperCase().includes(t)||c.codigo.includes(t)));}
+function _0xff(c){_act=c;modalNombre.textContent=c.nombre+' '+c.apellido;modalCodigo.textContent=c.codigo;modalInfo.textContent='📱 '+c.celular;modalPuntos.textContent=c.puntos;modalQR.innerHTML='';new QRCode(modalQR,{text:c.celular+'-'+c.codigo,width:180,height:180});historialMov.innerHTML=c.movimientos.map(m=>'<div class=mov-item>'+m.fecha+' '+m.tipo+' '+m.puntos+'</div>').reverse().join('');modalDetalle.style.display='flex';}
+function _0xaa(){let p=parseInt(puntosInput.value)||0;if(p<1)return;_act.puntos+=p;_act.movimientos.push({tipo:'sumó',puntos:p,fecha:new Date().toLocaleString()});_sv();_0xff(_act);_0xee();}
+function _0xbb(){let p=parseInt(prompt('Puntos a reclamar'));if(!p||p>_act.puntos)return;_act.puntos-=p;_act.reclamados+=p;_act.movimientos.push({tipo:'reclamó',puntos:p,fecha:new Date().toLocaleString()});_sv();_0xff(_act);_0xee();}
+function _0xcc(){if(confirm('Eliminar?')){_db=_db.filter(x=>x.id!==_act.id);_sv();modalDetalle.style.display='none';_0xee();}}
+function _0xdd(){stClientes.textContent=_db.length;let e=0,r=0,m=0;_db.forEach(c=>{c.movimientos.forEach(x=>{if(x.tipo==='sumó')e+=x.puntos});r+=c.reclamados;if(c.puntos>=100)m++;});stEntregados.textContent=e;stReclamados.textContent=r;stPremio.textContent=m;topClientes.innerHTML=[..._db].sort((a,b)=>b.puntos-a.puntos).slice(0,5).map(c=>'<div class=cliente-card>'+c.nombre+' '+c.apellido+' ⭐ '+c.puntos+'</div>').join('');}
+function _0x8h(){let a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(_db));a.download='backup.json';a.click();}
+function _0x9i(e){let f=e.target.files[0],r=new FileReader();r.onload=x=>{_db=JSON.parse(x.target.result);_sv();_0xee();};r.readAsText(f);}
+function _0x7g(){let t=buscarManual.value.toUpperCase();resultadosManual.innerHTML='';_db.filter(c=>c.nombre.toUpperCase().includes(t)||c.apellido.toUpperCase().includes(t)||c.codigo.includes(t)).forEach(c=>{let b=document.createElement('button');b.textContent=c.codigo+' - '+c.nombre;b.onclick=()=>_0xff(c);resultadosManual.appendChild(b);});}
+function _0x6f(){if(_scan){_scan.stop();_scan.clear()}_scan=new Html5Qrcode("reader");_scan.start({facingMode:"environment"},{fps:10,qrbox:220},t=>{let cd=t.split('-').pop().trim().toUpperCase();let c=_db.find(x=>x.codigo===cd);if(c){_scan.stop();_scan.clear();_0xff(c);}},e=>{});}
+</script>
+</body>
+</html>
